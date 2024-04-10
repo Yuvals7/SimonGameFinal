@@ -2,6 +2,7 @@ package com.example.simongamefinal;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -11,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,12 +29,15 @@ public class MainActivity extends AppCompatActivity {
     private int sequenceIndex; // Index to keep track of the current position in the sequence
     private int playerIndex; // Index to keep track of the player's input position
 
+    Random random; // Create a random number generator
+
     private static final List<String> COLORS = Arrays.asList("RED", "GREEN", "BLUE", "WHITE"); // List of available colors
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); // Set the layout for the activity
+        random = new Random();
 
         Log.d("XXXXX", "oncraete = ");
 
@@ -80,11 +86,39 @@ public class MainActivity extends AppCompatActivity {
                 handleColorClick("WHITE"); // Handle the click on the white color button
             }
         });
+
+        TextView textView = findViewById(R.id.textView);
+
+        long timerDuration = TimeUnit.MINUTES.toMillis(3);
+        long ticksInterval = 100;
+
+        new CountDownTimer(timerDuration, ticksInterval) {
+            long millis = 1000;
+            @Override
+            public void onTick(long millisUntilFinished) {
+                millis=millis - ticksInterval;
+                if (millis==0)
+                    millis= 1000;
+
+                String timerText = String.format(Locale.getDefault(),"%02d:%02d:%03d",
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)),
+                        millis
+
+                );
+
+                textView.setText(timerText);
+            }
+
+            @Override
+            public void onFinish() { textView.setText("finished");
+            }
+        }.start();
     }
 
     // Method to start the game
     private void startGame() {
-        Log.e("XXXXX", "start game = ");
         sequence = new ArrayList<>(); // Initialize the sequence list
         sequenceIndex = 0; // Initialize the sequence index
         playerIndex = 0; // Initialize the player index
@@ -94,16 +128,15 @@ public class MainActivity extends AppCompatActivity {
 
     // Method to generate the next item in the sequence
     private void generateNextSequenceItem() {
-        Log.e("XXXXX", "generateNextSequenceItem = ");
-        Random random = new Random(); // Create a random number generator
+
         int randomIndex = random.nextInt(COLORS.size()); // Generate a random index within the range of available colors
         String color = COLORS.get(randomIndex); // Get the color at the random index
         sequence.add(color); // Add the color to the sequence
+        Log.d("XXXXX", "sequence " + sequence);
     }
 
     // Method to display the sequence
     private void displaySequence() {
-        Log.e("XXXXX", "displaySequence = ");
         sequenceDisplay.setText(""); // Clear the sequence display
         final Handler handler = new Handler(); // Create a handler to delay execution
         for (int i = 0; i < sequence.size(); i++) { // Iterate through each color in the sequence
