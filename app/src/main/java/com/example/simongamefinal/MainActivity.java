@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         blueButton = findViewById(R.id.blue_button); // Get the blue color button
         whiteButton = findViewById(R.id.white_button); // Get the white color button
 
-        Log.d("XXXXX", "line 45 = " );
+        Log.d("XXXXX", "line 45 = ");
         // Set click listeners for buttons
 
         Log.d("XXXXX", "start button = " + startButton);
@@ -86,36 +86,37 @@ public class MainActivity extends AppCompatActivity {
                 handleColorClick("WHITE"); // Handle the click on the white color button
             }
         });
-
-        TextView textView = findViewById(R.id.textView);
-
-        long timerDuration = TimeUnit.MINUTES.toMillis(3);
-        long ticksInterval = 100;
-
-        new CountDownTimer(timerDuration, ticksInterval) {
-            long millis = 1000;
-            @Override
-            public void onTick(long millisUntilFinished) {
-                millis=millis - ticksInterval;
-                if (millis==0)
-                    millis= 1000;
-
-                String timerText = String.format(Locale.getDefault(),"%02d:%02d:%03d",
-                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
-                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)),
-                        millis
-
-                );
-
-                textView.setText(timerText);
-            }
-
-            @Override
-            public void onFinish() { textView.setText("finished");
-            }
-        }.start();
     }
+    private void startTimer(){
+            TextView textView = findViewById(R.id.textView);
+
+            long timerDuration = TimeUnit.MINUTES.toMillis(3);
+            long ticksInterval = 100;
+
+            new CountDownTimer(timerDuration, ticksInterval) {
+                long millis = 1000;
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    millis=millis - ticksInterval;
+                    if (millis==0)
+                        millis= 1000;
+
+                    String timerText = String.format(Locale.getDefault(),"%02d:%02d:%03d",
+                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)),
+                            millis
+
+                    );
+
+                    textView.setText(timerText);
+                }
+
+                @Override
+                public void onFinish() { textView.setText("finished");
+                }
+            }.start();
+        }
 
     // Method to start the game
     private void startGame() {
@@ -124,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         playerIndex = 0; // Initialize the player index
         generateNextSequenceItem(); // Generate the first item in the sequence
         displaySequence(); // Display the sequence
+        startTimer();
     }
 
     // Method to generate the next item in the sequence
