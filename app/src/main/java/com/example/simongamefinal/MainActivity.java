@@ -1,15 +1,20 @@
 package com.example.simongamefinal;
 
+import android.app.Notification;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +25,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 
 public class MainActivity extends AppCompatActivity {
-
+    public static final String NOTIFICATION_CHANNEL_ID = "10001" ;
+    private final static String default_notification_channel_id = "default" ;
     private TextView sequenceDisplay; // Text view to display the sequence
     private Button startButton; // Button to start the game
     private Button redButton; // Button for the color red
@@ -180,19 +186,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void startAlert() {
-        int i = 5;
-        Intent intent = new Intent(this, MyBroadcastReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this.getApplicationContext(), 234324243, intent, PendingIntent.FLAG_MUTABLE);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                + (i * 1000), pendingIntent);
-        Log.e("XXXXX", "start alert");
-    }
 
-
-    // Method to start the game
 
 
 
@@ -205,8 +199,29 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, ResultActivity.class); // Create an intent to start the result activity
         intent.putExtra("SCORE", score); // Pass the score as an extra to the intent
         startActivity(intent); // Start the result activity
-        startAlert();
+        scheduleNotification(getNotification( "go back to the game" ) , 5000 ) ;
         finish(); // Finish the main activity
 
     }
+
+    private void scheduleNotification (Notification notification , int delay) {
+        Intent notificationIntent = new Intent( this, MyBroadcastReceiver. class ) ;
+        notificationIntent.putExtra(MyBroadcastReceiver. NOTIFICATION_ID , 1 ) ;
+        notificationIntent.putExtra(MyBroadcastReceiver. NOTIFICATION , notification) ;
+        PendingIntent pendingIntent = PendingIntent. getBroadcast ( this, 0 , notificationIntent , PendingIntent. FLAG_IMMUTABLE ) ;
+        long futureInMillis = SystemClock. elapsedRealtime () + delay ;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context. ALARM_SERVICE ) ;
+        assert alarmManager != null;
+        alarmManager.set(AlarmManager. ELAPSED_REALTIME_WAKEUP , futureInMillis , pendingIntent) ;
+    }
+    private Notification getNotification (String content) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder( this, default_notification_channel_id ) ;
+        builder.setContentTitle( "Scheduled Notification" ) ;
+        builder.setContentText(content) ;
+        builder.setSmallIcon(R.drawable. ic_launcher_foreground ) ;
+        builder.setAutoCancel( true ) ;
+        builder.setChannelId( NOTIFICATION_CHANNEL_ID ) ;
+        return builder.build() ;
+    }
 }
+
