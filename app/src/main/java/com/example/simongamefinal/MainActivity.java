@@ -12,6 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
@@ -23,6 +26,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.Manifest;
 
 public class MainActivity extends AppCompatActivity {
     public static final String NOTIFICATION_CHANNEL_ID = "10001" ;
@@ -189,7 +193,26 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    // Register the permissions callback, which handles the user's response to the
+// system permissions dialog. Save the return value, an instance of
+// ActivityResultLauncher, as an instance variable.
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    scheduleNotification(getNotification( "go back to the game" ) , 5000 ) ;
+                    Log.e("XXXXX", "line 203");
+                    // Permission is granted. Continue the action or workflow in your
+                    // app.
+                } else {
 
+                    Log.e("XXXXX", "line 208");
+                    // Explain to the user that the feature is unavailable because the
+                    // feature requires a permission that the user has denied. At the
+                    // same time, respect the user's decision. Don't link to system
+                    // settings in an effort to convince the user to change their
+                    // decision.
+                }
+            });
 
 
 
@@ -199,10 +222,12 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, ResultActivity.class); // Create an intent to start the result activity
         intent.putExtra("SCORE", score); // Pass the score as an extra to the intent
         startActivity(intent); // Start the result activity
-        scheduleNotification(getNotification( "go back to the game" ) , 5000 ) ;
+        requestPermissionLauncher.launch(
+                Manifest.permission.POST_NOTIFICATIONS);
         finish(); // Finish the main activity
 
     }
+
 
     private void scheduleNotification (Notification notification , int delay) {
         Intent notificationIntent = new Intent( this, MyBroadcastReceiver. class ) ;

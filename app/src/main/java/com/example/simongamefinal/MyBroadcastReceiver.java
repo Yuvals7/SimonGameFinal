@@ -25,6 +25,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
         int id = intent.getIntExtra( NOTIFICATION_ID , 0 ) ;
         assert notificationManager != null;
         notificationManager.notify(id , notification) ;
+        Log.e("XXX", "line 28");
     }
 }
 
