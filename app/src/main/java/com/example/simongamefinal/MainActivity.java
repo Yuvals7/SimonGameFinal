@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> sequence; // List to store the sequence of colors
     private int sequenceIndex; // Index to keep track of the current position in the sequence
     private int playerIndex; // Index to keep track of the player's input position
-    private TextToSpeech tts;
+
 
     Random random; // Create a random number generator
 
@@ -143,18 +143,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main); // Set the layout for the activity
         random = new Random();
 
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    // TTS engine is successfully initialized.
-                    Log.e("XXXXX", "line 151 ");
-                } else {
-                    // Failed to initialize TTS engine.
-                    Log.e("XXXXX", "line 154 ");
-                }
-            }
-        });
+
 
         Log.d("XXXXX", "oncraete = ");
 
