@@ -31,7 +31,7 @@ public class ResultActivity extends AppCompatActivity {
 
         Set<Voice> voices = tts.getVoices();
         List<Voice> voiceList = new ArrayList<>(voices);
-        Voice selectedVoice = voiceList.get(10); // Change to the desired voice index
+        Voice selectedVoice = voiceList.get(1); // Change to the desired voice index
         tts.setVoice(selectedVoice);
     }
 
